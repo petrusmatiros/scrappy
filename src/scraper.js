@@ -3,8 +3,8 @@ const fs = require('fs');
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const config = require('./config.json');
-const { log } = require('console');
 puppeteer.use(StealthPlugin());
+const kleur = require('kleur');
 
 const WAIT_EVENTS = {
   LOAD: 'load',
@@ -43,11 +43,12 @@ async function scrape(
 
   async function scrapeURL(url) {
     const page = await browser.newPage();
+    page.setDefaultNavigationTimeout(0);
 
     if (allowedResources && allowedResources.length > 0) {
       await page.setRequestInterception(true);
 
-      page.on('request', async (req) => {
+      page.on('request', (req) => {
         if (allowedResources.includes(req.resourceType())) {
           req.continue();
         } else {
@@ -64,13 +65,25 @@ async function scrape(
           console.info(metrics);
         }
         // Check for client or server-side errors (HTTP status codes 4xx or 5xx)
+        let toReturn;
         if (response && (response.status() < 200 || response.status() >= 400)) {
-          return { url, error: response.status() };
-        } else {
-          return { url, error: null };
+          if (errorFree) {
+            errorFree = false;
+          }
+          toReturn = { url, status: response.status() };
         }
+        await page.close();
+        progressBar.update();
+        return toReturn;
       } catch (error) {
-        return { url, error: error.message };
+        if (errorFree) {
+          errorFree = false;
+        }
+        console.log(`Error: ${error.message} - ${url}`);
+        await page.close();
+        progressBar.update();
+
+        return { url, status: error.message };
       }
     } else {
       await page.goto(url, { waitUntil });
@@ -80,15 +93,26 @@ async function scrape(
         console.info(metrics);
       }
 
-      const data = await page.evaluate(scrapingFunction);
+      let data = await page.evaluate(scrapingFunction);
 
       await page.close();
-
+      progressBar.update();
       return data;
     }
   }
 
-  const results = await Promise.all(urlsToScrape.map(scrapeURL));
+  let errorFree = true;
+  const progressBar = createProgressBar(urlsToScrape.length);
+  let results = await Promise.all(urlsToScrape.map(scrapeURL));
+  if (checkErrors) {
+    results = results.filter((res) => res !== null);
+  }
+  process.stdout.write('\n');
+  if (!errorFree) {
+    console.log(kleur.red().bold('There were errors while scraping the URLs.'));
+  } else {
+    console.log(kleur.green().bold('All URLs were scraped successfully.'));
+  }
 
   await browser.close();
   return results;
@@ -120,17 +144,45 @@ async function runScraper(options) {
   if (benchmark) {
     timings.set('total', performance.now());
   }
-  const scraped = await scrape(urls, metrics, waitUntil, allowedResources, scrapingFunction, checkErrors);
-
+  console.log(`Scraping ${urls.length} URLs...`)
+  let scraped = await scrape(urls, metrics, waitUntil, allowedResources, scrapingFunction, checkErrors);
   if (benchmark) {
     timings.set('total', (performance.now() - timings.get('total')).toFixed(2));
-    console.log('benchmark (ms):', timings);
+    console.log(`Done! Completed in ${timings.get('total')} ms (${(timings.get('total')/1000).toFixed(2)} s).`)
+  } else {
+    console.log('Done!');
   }
   if (logResults) {
     console.log('scraped:', scraped);
     console.log('length:', scraped.length);
   }
-  fs.writeFileSync(`${jsonOutputFile ? jsonOutputFile : 'output'}.json`, JSON.stringify(scraped[0], null, 2));
+  scraped = scraped.length === 1 ? scraped[0] : scraped;
+  fs.writeFileSync(`${jsonOutputFile ? jsonOutputFile : 'output'}.json`, JSON.stringify(scraped, null, 2));
+}
+
+function createProgressBar(totalSteps) {
+  const progressBarLength = 20;
+  const stepSize = totalSteps / progressBarLength;
+  let currentStep = 0;
+
+  process.stdout.write('[                    ] 0%');
+
+  return {
+    update: () => {
+      currentStep += 1;
+      const progress = Math.floor((currentStep / totalSteps) * 100);
+      const completedSteps = Math.floor(currentStep / stepSize);
+
+      process.stdout.clearLine();
+      process.stdout.cursorTo(1);
+
+      const progressBar = Array.from({ length: progressBarLength }, (_, index) => {
+        return index < completedSteps ? '=' : ' ';
+      }).join('');
+
+      process.stdout.write(`[${progressBar}] ${progress}%`);
+    },
+  };
 }
 
 module.exports = {
