@@ -158,7 +158,7 @@ async function runScraper(options) {
   } = options;
 
   const data = fs.readFileSync(`${jsonInputFile ? jsonInputFile : 'data'}.json`);
-  const urls = JSON.parse(data);
+  const urls = JSON.parse(data).flat();
   if (whatStringToReplace && replaceWithString) {
     for (let i = 0; i < urls.length; i++) {
       urls[i] = urls[i].replace(whatStringToReplace, replaceWithString);
