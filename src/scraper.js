@@ -79,7 +79,6 @@ async function scrape(
         if (errorFree) {
           errorFree = false;
         }
-        console.log(`Error: ${error.message} - ${url}`);
         await page.close();
         progressBar.update();
 

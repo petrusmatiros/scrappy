@@ -4,8 +4,8 @@ const scrapingOptions = {
   benchmark: true,
   metrics: false,
   logResults: false,
-  waitUntil: WAIT_EVENTS.DOMCONTENTLOADED,
-  allowedResources: [BROWSER_RESOURCE_TYPES.DOCUMENT],
+  waitUntil: WAIT_EVENTS.LOAD,
+  allowedResources: [],
   scrapingFunction: () => {
     const selected = document.querySelectorAll('tbody a');
     const data = [];
@@ -16,11 +16,29 @@ const scrapingOptions = {
     }
     return data.length ? data : null;
   },
-  checkErrors: true,
+  checkErrors: false,
   whatStringToReplace: null,
   replaceWithString: null,
-  jsonInputFile: 'urls',
-  jsonOutputFile: 'output',
+  jsonInputFile: 'data',
+  jsonOutputFile: 'sitemaps',
 };
 
-runScraper(scrapingOptions);
+async function runBatchJob() {
+  await runScraper(scrapingOptions);
+
+  console.log('new');
+  scrapingOptions.jsonInputFile = 'sitemaps';
+  scrapingOptions.jsonOutputFile = 'urls';
+  await runScraper(scrapingOptions);
+  
+  scrapingOptions.jsonInputFile = 'urls';
+  scrapingOptions.jsonOutputFile = 'output';
+  scrapingOptions.checkErrors = true;
+  scrapingOptions.waitUntil = WAIT_EVENTS.DOMCONTENTLOADED;
+  scrapingOptions.allowedResources = [
+    BROWSER_RESOURCE_TYPES.DOCUMENT,
+  ];
+  await runScraper(scrapingOptions);
+}
+
+runBatchJob();
