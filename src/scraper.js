@@ -182,7 +182,7 @@ async function runScraper(options) {
   }
   console.log(`Writing output to ${jsonOutputFile ? jsonOutputFile : 'output'}.json...`);
   console.log('----------------------------------------');
-  scraped = scraped.length === 1 ? scraped[0] : scraped;
+  scraped = scraped.length === 1 ? scraped[0] : scraped.flat();
   fs.writeFileSync(`${jsonOutputFile ? jsonOutputFile : 'output'}.json`, JSON.stringify(scraped, null, 2));
 }
 
