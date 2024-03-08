@@ -5,6 +5,7 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const config = require('./config.json');
 puppeteer.use(StealthPlugin());
 const kleur = require('kleur');
+const { time } = require('console');
 
 const WAIT_EVENTS = {
   LOAD: 'load',
@@ -69,6 +70,7 @@ async function scrape(
   async function scrapeURL(url) {
     const page = await browser.newPage();
     page.setDefaultNavigationTimeout(0);
+    page.setDefaultTimeout(0);
 
     if (allowedResources && allowedResources.length > 0) {
       await page.setRequestInterception(true);
