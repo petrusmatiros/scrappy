@@ -1,32 +1,31 @@
 const { runScraper, WAIT_EVENTS, BROWSER_RESOURCE_TYPES } = require('./scraper');
 
-const scrapingOptions = {
-  benchmark: true,
-  metrics: false,
-  logResults: false,
-  waitUntil: WAIT_EVENTS.LOAD,
-  allowedResources: [],
-  scrapingFunction: () => {
-    const selected = document.querySelectorAll('tbody a');
-    const data = [];
-    for (let i = 0; i < selected.length; i++) {
-      if (selected[i].href) {
-        data.push(selected[i].href);
-      }
-    }
-    return data.length ? data : null;
-  },
-  checkErrors: false,
-  whatStringToReplace: null,
-  replaceWithString: null,
-  jsonInputFile: 'data',
-  jsonOutputFile: 'sitemaps',
-};
 
 async function runBatchJob() {
+  const scrapingOptions = {
+    benchmark: true,
+    metrics: false,
+    logResults: false,
+    waitUntil: WAIT_EVENTS.LOAD,
+    allowedResources: [],
+    scrapingFunction: () => {
+      const selected = document.querySelectorAll('tbody a');
+      const data = [];
+      for (let i = 0; i < selected.length; i++) {
+        if (selected[i].href) {
+          data.push(selected[i].href);
+        }
+      }
+      return data.length ? data : null;
+    },
+    checkErrors: false,
+    whatStringToReplace: null,
+    replaceWithString: null,
+    jsonInputFile: 'data',
+    jsonOutputFile: 'sitemaps',
+  };
   await runScraper(scrapingOptions);
 
-  console.log('new');
   scrapingOptions.jsonInputFile = 'sitemaps';
   scrapingOptions.jsonOutputFile = 'urls';
   await runScraper(scrapingOptions);

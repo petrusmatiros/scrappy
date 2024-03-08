@@ -29,6 +29,31 @@ const BROWSER_RESOURCE_TYPES = {
   OTHER: 'other',
 };
 
+function createProgressBar(totalSteps) {
+  const progressBarLength = 20;
+  const stepSize = totalSteps / progressBarLength;
+  let currentStep = 0;
+
+  process.stdout.write('[                    ] 0%');
+
+  return {
+    update: () => {
+      currentStep += 1;
+      const progress = Math.floor((currentStep / totalSteps) * 100);
+      const completedSteps = Math.floor(currentStep / stepSize);
+
+      process.stdout.clearLine();
+      process.stdout.cursorTo(1);
+
+      const progressBar = Array.from({ length: progressBarLength }, (_, index) => {
+        return index < completedSteps ? '=' : ' ';
+      }).join('');
+
+      process.stdout.write(`[${progressBar}] ${progress}%`);
+    },
+  };
+}
+
 async function scrape(
   urlsToScrape,
   includeMetrics = false,
@@ -143,11 +168,11 @@ async function runScraper(options) {
   if (benchmark) {
     timings.set('total', performance.now());
   }
-  console.log(`Scraping ${urls.length} URLs...`)
+  console.log(kleur.dim(`Scraping ${urls.length} URLs from ${jsonInputFile ? jsonInputFile : 'data'}.json...`));
   let scraped = await scrape(urls, metrics, waitUntil, allowedResources, scrapingFunction, checkErrors);
   if (benchmark) {
     timings.set('total', (performance.now() - timings.get('total')).toFixed(2));
-    console.log(`Done! Completed in ${timings.get('total')} ms (${(timings.get('total')/1000).toFixed(2)} s).`)
+    console.log(`Done! Completed in ${timings.get('total')} ms (${(timings.get('total')/1000).toFixed(2)} s)`)
   } else {
     console.log('Done!');
   }
@@ -155,33 +180,10 @@ async function runScraper(options) {
     console.log('scraped:', scraped);
     console.log('length:', scraped.length);
   }
+  console.log(`Writing output to ${jsonOutputFile ? jsonOutputFile : 'output'}.json...`);
+  console.log('----------------------------------------');
   scraped = scraped.length === 1 ? scraped[0] : scraped;
   fs.writeFileSync(`${jsonOutputFile ? jsonOutputFile : 'output'}.json`, JSON.stringify(scraped, null, 2));
-}
-
-function createProgressBar(totalSteps) {
-  const progressBarLength = 20;
-  const stepSize = totalSteps / progressBarLength;
-  let currentStep = 0;
-
-  process.stdout.write('[                    ] 0%');
-
-  return {
-    update: () => {
-      currentStep += 1;
-      const progress = Math.floor((currentStep / totalSteps) * 100);
-      const completedSteps = Math.floor(currentStep / stepSize);
-
-      process.stdout.clearLine();
-      process.stdout.cursorTo(1);
-
-      const progressBar = Array.from({ length: progressBarLength }, (_, index) => {
-        return index < completedSteps ? '=' : ' ';
-      }).join('');
-
-      process.stdout.write(`[${progressBar}] ${progress}%`);
-    },
-  };
 }
 
 module.exports = {
