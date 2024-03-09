@@ -1,7 +1,7 @@
 const { runScraper, WAIT_EVENTS, BROWSER_RESOURCE_TYPES } = require('./scraper');
 
-
-async function runBatchJob() {
+function setupBatch() {
+  const jobs = [];
   const scrapingOptions = {
     benchmark: true,
     metrics: false,
@@ -23,21 +23,23 @@ async function runBatchJob() {
     replaceWithString: null,
     jsonInputFile: 'data',
     jsonOutputFile: 'sitemaps',
+    parentDir: 'data',
   };
-  await runScraper(scrapingOptions);
+  jobs.push(scrapingOptions)
 
-  scrapingOptions.jsonInputFile = 'sitemaps';
-  scrapingOptions.jsonOutputFile = 'urls';
-  await runScraper(scrapingOptions);
+  jobs.push({...scrapingOptions, jsonInputFile: 'sitemaps', jsonOutputFile: 'urls'})
   
-  scrapingOptions.jsonInputFile = 'urls';
-  scrapingOptions.jsonOutputFile = 'output';
-  scrapingOptions.checkErrors = true;
-  scrapingOptions.waitUntil = WAIT_EVENTS.DOMCONTENTLOADED;
-  scrapingOptions.allowedResources = [
-    BROWSER_RESOURCE_TYPES.DOCUMENT,
-  ];
-  await runScraper(scrapingOptions);
+  jobs.push({...scrapingOptions, jsonInputFile: 'urls', jsonOutputFile: 'output', checkErrors: true, waitUntil: WAIT_EVENTS.DOMCONTENTLOADED, allowedResources: [BROWSER_RESOURCE_TYPES.DOCUMENT]});
+  return jobs;
 }
 
+async function runBatchJob() {
+  const jobs = setupBatch();
+  for (let i = 0; i < jobs.length; ++i) {
+    console.log(`Running job ${i + 1} of ${jobs.length}...`);
+    jobs[i].currentJob = i + 1;
+    jobs[i].totalJobs = jobs.length;
+    await runScraper(jobs[i]);
+  }
+}
 runBatchJob();
