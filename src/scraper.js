@@ -170,6 +170,10 @@ async function runScraper(options) {
     currentJob,
     totalJobs,
   } = options;
+  // create directory if it doesn't exist
+  if (!fs.existsSync(parentDir)) {
+    fs.mkdirSync(parentDir);
+  }
   const data = fs.readFileSync(`${parentDir}/${jsonInputFile ? jsonInputFile : 'data'}.json`);
   const urls = JSON.parse(data).flat();
   if (whatStringToReplace && replaceWithString) {
