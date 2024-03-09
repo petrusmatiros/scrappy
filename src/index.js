@@ -1,6 +1,6 @@
 const { runScraper, WAIT_EVENTS, BROWSER_RESOURCE_TYPES } = require('./scraper');
 
-function setupBatch() {
+function setupBatchJobs() {
   const jobs = [];
   const scrapingOptions = {
     benchmark: true,
@@ -34,7 +34,7 @@ function setupBatch() {
 }
 
 async function runBatchJob() {
-  const jobs = setupBatch();
+  const jobs = setupBatchJobs();
   for (let i = 0; i < jobs.length; ++i) {
     console.log(`Running job ${i + 1} of ${jobs.length}...`);
     jobs[i].currentJob = i + 1;
