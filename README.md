@@ -1,9 +1,10 @@
 <p align="center">
 <img width="128px" src="./scrappy_icon.jpg" alt="logo" style="vertical-align:middle">
 <h1 align="center">scrappy</h1>
-<p align="center">nom nom nom</p>
+<h3 align="center">a general purpose scraper using puppeteer</h3>
+<p align="center">"nom nom nom"</p>
 </p>
-a general purpose scraper using puppeteer
+
 
 ## Installation and setup
 ```bash
