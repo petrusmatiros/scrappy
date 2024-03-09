@@ -72,6 +72,32 @@ function setupBatchJobs() {
 | `jsonOutputFile` | string | the name of the output json file |
 | `parentDir` | string | the parent directory of the input and output json file |
 
+### WAIT_EVENTS
+| Value | Description |
+| --- | --- |
+| `LOAD` | consider navigation to be finished when the load event is fired |
+| `DOMCONTENTLOADED` | consider navigation to be finished when the DOMContentLoaded event is fired |
+| `NETWORKIDLE0` | consider navigation to be finished when there are no more than 0 network connections for at least 500 ms |
+| `NETWORKIDLE2` | consider navigation to be finished when there are no more than 2 network connections for at least 500 ms |
+
+### BROWSER_RESOURCE_TYPES
+| Value | Description |
+| --- | --- |
+| `DOCUMENT` | the main HTML document of the page |
+| `STYLESHEET` | a CSS stylesheet |
+| `IMAGE` | an image |
+| `MEDIA` | a media resource |
+| `FONT` | a font resource |
+| `SCRIPT` | a script |
+| `TEXTTRACK` | a text track resource |
+| `XHR` | a resource fetched using XMLHttpRequest |
+| `FETCH` | a fetch request |
+| `EVENTSOURCE` | a resource received over a server-sent event |
+| `WEBSOCKET` | a resource received over a websocket |
+| `MANIFEST` | a manifest |
+| `OTHER` | a other type of resource |
+
+
 ## Running the scraper
 The `runBatchJobs` function will run the jobs sequentially that have been setup using `setupBatchJobs` - that's it!
 
