@@ -137,7 +137,7 @@ async function scrape(
     results = await Promise.all(urlsToScrape.map(scrapeURL));
   }
   if (checkErrors) {
-    results = results.filter((result) => result.status !== 200);
+    results = results.filter((result) => result.status >= 400 || typeof result.status === 'string');
   }
   process.stdout.write('\n');
   if (!errorFree) {
