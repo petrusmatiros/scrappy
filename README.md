@@ -10,7 +10,7 @@ a general purpose scraper using puppeteer
 npm i
 ```
 
-Add your json file with urls e.g. add `data.json` file in `src/data` with the following structure:
+Add a json file with the urls you want to scrape, e.g. add `data.json` file in `src/data` with the following structure:
 ```json
 [
   "https://www.example1.com",
@@ -20,7 +20,7 @@ Add your json file with urls e.g. add `data.json` file in `src/data` with the fo
 
 ```
 
-Configure your options for each job in `src/index.js` in the `setupBatchJobs` function e.g.:
+Configure your options for each job in `src/index.js` in the `setupBatchJobs` function, e.g.:
 ```javascript
 function setupBatchJobs() {
   const jobs = [];
@@ -99,7 +99,7 @@ function setupBatchJobs() {
 
 
 ## Running the scraper
-The `runBatchJobs` function will run the jobs sequentially that have been setup using `setupBatchJobs` - that's it!
+The `runBatchJobs` function will run the jobs sequentially, that have been setup using `setupBatchJobs` - that's it!
 
 To run the script, just run `node index.js` in the `src` directory:
 ```bash
