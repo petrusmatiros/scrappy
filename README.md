@@ -72,7 +72,7 @@ function setupBatchJobs() {
 | `jsonOutputFile` | string | the name of the output json file |
 | `parentDir` | string | the parent directory of the input and output json file |
 
-### WAIT_EVENTS
+#### WAIT_EVENTS
 | Value | Description |
 | --- | --- |
 | `LOAD` | consider navigation to be finished when the load event is fired |
@@ -80,7 +80,7 @@ function setupBatchJobs() {
 | `NETWORKIDLE0` | consider navigation to be finished when there are no more than 0 network connections for at least 500 ms |
 | `NETWORKIDLE2` | consider navigation to be finished when there are no more than 2 network connections for at least 500 ms |
 
-### BROWSER_RESOURCE_TYPES
+#### BROWSER_RESOURCE_TYPES
 | Value | Description |
 | --- | --- |
 | `DOCUMENT` | the main HTML document of the page |
