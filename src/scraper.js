@@ -5,7 +5,6 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 const config = require('./config.json');
 const kleur = require('kleur');
-const { time } = require('console');
 
 const WAIT_EVENTS = {
   LOAD: 'load',
@@ -90,16 +89,14 @@ async function scrape(
           const metrics = await page.metrics();
           console.info(metrics);
         }
-        let toReturn;
         if (response && (response.status() < 200 || response.status() >= 400)) {
           if (errorFree) {
             errorFree = false;
           }
-          toReturn = { url, status: response.status() };
         }
         await page.close();
         progressBar.update();
-        return toReturn;
+        return { url, status: response.status() };
       } catch (error) {
         if (errorFree) {
           errorFree = false;
@@ -140,7 +137,7 @@ async function scrape(
     results = await Promise.all(urlsToScrape.map(scrapeURL));
   }
   if (checkErrors) {
-    results = results.filter((result) => result !== undefined || result !== null);
+    results = results.filter((result) => result.status !== 200);
   }
   process.stdout.write('\n');
   if (!errorFree) {
