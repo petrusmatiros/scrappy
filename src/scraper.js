@@ -159,7 +159,7 @@ async function runScraper(options) {
   if (benchmark) {
     timings.set('total', performance.now());
   }
-  console.log(kleur.dim(`Scraping ${urls.length} URLs from ${jsonInputFile ? jsonInputFile : 'data'}.json...`));
+  console.log(kleur.dim(`${checkErrors ? 'Checking' : 'Scraping'} ${urls.length} URLs from ${jsonInputFile ? jsonInputFile : 'data'}.json...`));
   try {
     let scraped = await scrape(urls, metrics, waitUntil, allowedResources, scrapingFunction, checkErrors, currentJob, totalJobs);
 
@@ -174,7 +174,7 @@ async function runScraper(options) {
       console.log('length:', scraped.length);
     }
     console.log(
-      'Writing output to ' + kleur.underline(`${parentDir}/${jsonOutputFile ? jsonOutputFile : 'output'}.json`) + '...',
+    `Writing ${checkErrors ? 'status code' : 'scraped'} data to ` + kleur.underline(`${parentDir}/${jsonOutputFile ? jsonOutputFile : 'output'}.json`) + '...',
     );
     console.log('----------------------------------------');
     scraped = scraped.flat();
