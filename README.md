@@ -16,7 +16,7 @@ Add a json file with the urls you want to scrape, e.g. add `data.json` file in `
   "https://www.example1.com",
   "https://www.example2.com",
   "https://www.example3.com"
-],
+]
 
 ```
 
