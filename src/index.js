@@ -1,4 +1,5 @@
-const { runScraper, WAIT_EVENTS, BROWSER_RESOURCE_TYPES } = require('./scraper');
+const { runScraper } = require('./scraper');
+const { WAIT_EVENTS, BROWSER_RESOURCE_TYPES } = require('./constants');
 
 function setupBatchJobs() {
   const jobs = [];
