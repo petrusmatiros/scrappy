@@ -160,6 +160,28 @@ function validateOptions(options) {
   }
 }
 
+
+/**
+ * Runs the scraper with the provided options.
+ *
+ * @param {Object} options - The options for running the scraper.
+ * @param {boolean} options.benchmark - Whether to enable benchmarking.
+ * @param {boolean} options.metrics - Whether to include metrics in the scraping process.
+ * @param {boolean} options.logResults - Whether to log the scraped results.
+ * @param {string} options.waitUntil - The waitUntil value for page navigation.
+ * @param {Array<string>} options.allowedResources - The allowed resource types for page requests.
+ * @param {Function} options.scrapingFunction - The function to be executed for scraping.
+ * @param {boolean} options.checkErrors - Whether to check for errors during scraping.
+ * @param {string} options.whatStringToReplace - The string to be replaced in the URLs.
+ * @param {string} options.replaceWithString - The string to replace the matched string in the URLs.
+ * @param {string} options.jsonInputFile - The input JSON file name.
+ * @param {string} options.jsonOutputFile - The output JSON file name.
+ * @param {string} options.parentDir - The parent directory for the JSON files.
+ * @param {number} options.currentJob - The current job number.
+ * @param {number} options.totalJobs - The total number of jobs.
+ * @throws {Error} If any of the options have invalid types.
+ * @returns {Promise<Array<Object>>} The scraped data.
+ */
 async function runScraper(options) {
   const {
     benchmark,
