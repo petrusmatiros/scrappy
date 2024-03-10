@@ -23,50 +23,44 @@ Add a json file with the urls you want to scrape, e.g. add `data.json` file in `
 
 Configure your options for each job in `src/index.js` by pushing an options object for each job, e.g.:
 ```javascript
-runBatchScraper((() => {
-  const jobs = [];
-  const scrapingOptions = {
-    benchmark: true,
-    metrics: false,
-    logResults: false,
-    waitUntil: WAIT_EVENTS.LOAD,
-    allowedResources: [],
-    scrapingFunction: () => {
-      const selected = document.querySelectorAll('tbody a');
-      const data = [];
-      for (let i = 0; i < selected.length; i++) {
-        if (selected[i].href) {
-          data.push(selected[i].href);
+runBatchScraper(
+  (() => {
+    const jobs = [];
+    const scrapingOptions = {
+      scrapingFunction: () => {
+        const selected = document.querySelectorAll('tbody a');
+        const data = [];
+        for (let i = 0; i < selected.length; i++) {
+          if (selected[i].href) {
+            data.push(selected[i].href);
+          }
         }
-      }
-      return data.length ? data : null;
-    },
-    checkErrors: false,
-    whatStringToReplace: '',
-    replaceWithString: '',
-    jsonInputFile: 'data',
-    jsonOutputFile: 'sitemaps',
-    parentDir: 'data',
-  };
-  jobs.push(scrapingOptions);
+        return data.length ? data : null;
+      },
+      jsonInputFile: 'data',
+      jsonOutputFile: 'sitemaps',
+      parentDir: 'data',
+    };
+    jobs.push(scrapingOptions);
 
-  jobs.push({ ...scrapingOptions, jsonInputFile: 'sitemaps', jsonOutputFile: 'urls' });
+    jobs.push({ ...scrapingOptions, jsonInputFile: 'sitemaps', jsonOutputFile: 'urls' });
 
-  jobs.push({
-    ...scrapingOptions,
-    jsonInputFile: 'urls',
-    jsonOutputFile: 'output',
-    waitUntil: WAIT_EVENTS.DOMCONTENTLOADED,
-    allowedResources: [BROWSER_RESOURCE_TYPES.DOCUMENT],
-    scrapingFunction: () => {
-      const selected = document.getElementById('__next');
-      return selected
-        ? { url: window.location.href, servedByNext: true }
-        : { url: window.location.href, servedByNext: false };
-    },
-  });
-  return jobs;
-})());
+    jobs.push({
+      ...scrapingOptions,
+      jsonInputFile: 'urls',
+      jsonOutputFile: 'output',
+      waitUntil: WAIT_EVENTS.DOMCONTENTLOADED,
+      allowedResources: [BROWSER_RESOURCE_TYPES.DOCUMENT],
+      scrapingFunction: () => {
+        const selected = document.getElementById('__next');
+        return selected
+          ? { url: window.location.href, servedByNext: true }
+          : { url: window.location.href, servedByNext: false };
+      },
+    });
+    return jobs;
+  })(),
+);
 ```
 
 ## Scraping configuration
