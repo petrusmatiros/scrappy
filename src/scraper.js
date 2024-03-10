@@ -229,7 +229,7 @@ async function runScraper(options) {
         kleur.underline(`${parentDir}/${jsonOutputFile ? jsonOutputFile : 'output'}.json`) +
         '...',
     );
-    console.log('----------------------------------------');
+    console.log('-------------------------------------------------');
     scraped = scraped.flat();
     fs.writeFileSync(
       `${parentDir}/${jsonOutputFile ? jsonOutputFile : 'output'}.json`,
