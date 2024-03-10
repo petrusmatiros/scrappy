@@ -37,7 +37,7 @@ function setupBatchJobs() {
     waitUntil: WAIT_EVENTS.DOMCONTENTLOADED,
     allowedResources: [BROWSER_RESOURCE_TYPES.DOCUMENT],
     scrapingFunction: () => {
-      const selected = document.querySelector('#__next');
+      const selected = document.getElementById('__next');
       return selected
         ? { url: window.location.href, servedByNext: true }
         : { url: window.location.href, servedByNext: false };
