@@ -7,7 +7,6 @@ const config = require('./config.json');
 const kleur = require('kleur');
 const { WAIT_EVENTS, BROWSER_RESOURCE_TYPES } = require('./constants');
 
-
 function createProgressBar(totalSteps, currentJob, totalJobs) {
   const progressBarLength = 20;
   const stepSize = totalSteps / progressBarLength;
@@ -152,7 +151,7 @@ function validateOptions(options) {
     // 1. option is not of the correct type
     // 2. option is an array and it is populated with items of the wrong type
     if (
-      typeof options[option] !== validOptionTypes[option].split("-")[0] ||
+      typeof options[option] !== validOptionTypes[option].split('-')[0] ||
       (Array.isArray(options[option]) &&
         options[option].length > 0 &&
         options[option].some((item) => typeof item !== validOptionTypes[option].split('-')[1]))
@@ -161,7 +160,6 @@ function validateOptions(options) {
     }
   }
 }
-
 
 /**
  * Runs the scraper with the provided options.
@@ -186,15 +184,15 @@ function validateOptions(options) {
  */
 async function runScraper(options) {
   const {
-    benchmark=true,
-    metrics=false,
-    logResults=false,
+    benchmark = true,
+    metrics = false,
+    logResults = false,
     waitUntil = WAIT_EVENTS.LOAD,
     allowedResources = [],
     scrapingFunction = () => {},
-    checkErrors=false,
-    whatStringToReplace='',
-    replaceWithString='',
+    checkErrors = false,
+    whatStringToReplace = '',
+    replaceWithString = '',
     jsonInputFile,
     jsonOutputFile,
     parentDir,
@@ -276,5 +274,5 @@ async function runBatchScraper(jobs) {
 }
 
 module.exports = {
-  runBatchScraper
+  runBatchScraper,
 };
