@@ -20,17 +20,29 @@ function setupBatchJobs() {
       return data.length ? data : null;
     },
     checkErrors: false,
-    whatStringToReplace: null,
-    replaceWithString: null,
+    whatStringToReplace: '',
+    replaceWithString: '',
     jsonInputFile: 'data',
     jsonOutputFile: 'sitemaps',
     parentDir: 'data',
   };
-  jobs.push(scrapingOptions)
+  jobs.push(scrapingOptions);
 
-  jobs.push({...scrapingOptions, jsonInputFile: 'sitemaps', jsonOutputFile: 'urls'})
-  
-  jobs.push({...scrapingOptions, jsonInputFile: 'urls', jsonOutputFile: 'output', checkErrors: true, waitUntil: WAIT_EVENTS.DOMCONTENTLOADED, allowedResources: [BROWSER_RESOURCE_TYPES.DOCUMENT]});
+  jobs.push({ ...scrapingOptions, jsonInputFile: 'sitemaps', jsonOutputFile: 'urls' });
+
+  jobs.push({
+    ...scrapingOptions,
+    jsonInputFile: 'urls',
+    jsonOutputFile: 'output',
+    waitUntil: WAIT_EVENTS.DOMCONTENTLOADED,
+    allowedResources: [BROWSER_RESOURCE_TYPES.DOCUMENT],
+    scrapingFunction: () => {
+      const selected = document.querySelector('#__next');
+      return selected
+        ? { url: window.location.href, servedByNext: true }
+        : { url: window.location.href, servedByNext: false };
+    },
+  });
   return jobs;
 }
 

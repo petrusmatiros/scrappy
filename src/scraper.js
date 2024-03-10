@@ -42,7 +42,7 @@ async function scrape(
   const browser = await puppeteer.launch({
     ...config.puppeteerOptions,
   });
-  
+
   async function scrapeURL(url) {
     const page = await browser.newPage();
     page.setDefaultNavigationTimeout(0);
@@ -127,6 +127,39 @@ async function scrape(
   return results;
 }
 
+const validOptionTypes = {
+  benchmark: 'boolean',
+  metrics: 'boolean',
+  logResults: 'boolean',
+  waitUntil: 'string',
+  allowedResources: 'object-string',
+  scrapingFunction: 'function',
+  checkErrors: 'boolean',
+  whatStringToReplace: 'string',
+  replaceWithString: 'string',
+  jsonInputFile: 'string',
+  jsonOutputFile: 'string',
+  parentDir: 'string',
+  currentJob: 'number',
+  totalJobs: 'number',
+};
+
+function validateOptions(options) {
+  for (const option in options) {
+    // throw error in the following cases:
+    // 1. option is not of the correct type
+    // 2. option is an array and it is populated with items of the wrong type
+    if (
+      typeof options[option] !== validOptionTypes[option].split("-")[0] ||
+      (Array.isArray(options[option]) &&
+        options[option].length > 0 &&
+        options[option].some((item) => typeof item !== validOptionTypes[option].split('-')[1]))
+    ) {
+      throw new Error(`Invalid type for option ${option}: ${options[option]}`);
+    }
+  }
+}
+
 async function runScraper(options) {
   const {
     benchmark,
@@ -144,6 +177,9 @@ async function runScraper(options) {
     currentJob,
     totalJobs,
   } = options;
+
+  validateOptions(options);
+
   // create directory if it doesn't exist
   if (!fs.existsSync(parentDir)) {
     fs.mkdirSync(parentDir);
@@ -159,9 +195,24 @@ async function runScraper(options) {
   if (benchmark) {
     timings.set('total', performance.now());
   }
-  console.log(kleur.dim(`${checkErrors ? 'Checking' : 'Scraping'} ${urls.length} URLs from ${jsonInputFile ? jsonInputFile : 'data'}.json...`));
+  console.log(
+    kleur.dim(
+      `${checkErrors ? 'Checking' : 'Scraping'} ${urls.length} URLs from ${
+        jsonInputFile ? jsonInputFile : 'data'
+      }.json...`,
+    ),
+  );
   try {
-    let scraped = await scrape(urls, metrics, waitUntil, allowedResources, scrapingFunction, checkErrors, currentJob, totalJobs);
+    let scraped = await scrape(
+      urls,
+      metrics,
+      waitUntil,
+      allowedResources,
+      scrapingFunction,
+      checkErrors,
+      currentJob,
+      totalJobs,
+    );
 
     if (benchmark) {
       timings.set('total', (performance.now() - timings.get('total')).toFixed(2));
@@ -174,7 +225,9 @@ async function runScraper(options) {
       console.log('length:', scraped.length);
     }
     console.log(
-    `Writing ${checkErrors ? 'status code' : 'scraped'} data to ` + kleur.underline(`${parentDir}/${jsonOutputFile ? jsonOutputFile : 'output'}.json`) + '...',
+      `Writing ${checkErrors ? 'status code' : 'scraped'} data to ` +
+        kleur.underline(`${parentDir}/${jsonOutputFile ? jsonOutputFile : 'output'}.json`) +
+        '...',
     );
     console.log('----------------------------------------');
     scraped = scraped.flat();

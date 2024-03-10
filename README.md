@@ -42,8 +42,8 @@ function setupBatchJobs() {
       return data.length ? data : null;
     },
     checkErrors: false,
-    whatStringToReplace: null,
-    replaceWithString: null,
+    whatStringToReplace: '',
+    replaceWithString: '',
     jsonInputFile: 'data',
     jsonOutputFile: 'sitemaps',
     parentDir: 'data',
