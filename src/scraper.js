@@ -207,6 +207,7 @@ async function runScraper(options) {
     fs.mkdirSync(parentDir);
   }
   const data = fs.readFileSync(`${parentDir}/${jsonInputFile ? jsonInputFile : 'data'}.json`);
+  console.log(`Running job ${currentJob} of ${totalJobs}...`);
   const urls = JSON.parse(data).flat();
   if (whatStringToReplace && replaceWithString) {
     for (let i = 0; i < urls.length; i++) {
@@ -264,6 +265,14 @@ async function runScraper(options) {
   }
 }
 
+async function runBatchScraper(jobs) {
+  for (let i = 0; i < jobs.length; ++i) {
+    jobs[i].currentJob = i + 1;
+    jobs[i].totalJobs = jobs.length;
+    await runScraper(jobs[i]);
+  }
+}
+
 module.exports = {
-  runScraper,
+  runBatchScraper
 };

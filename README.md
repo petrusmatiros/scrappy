@@ -21,9 +21,9 @@ Add a json file with the urls you want to scrape, e.g. add `data.json` file in `
 
 ```
 
-Configure your options for each job in `src/index.js` in the `setupBatchJobs` function, e.g.:
+Configure your options for each job in `src/index.js` by pushing an options object for each job, e.g.:
 ```javascript
-function setupBatchJobs() {
+runBatchScraper(() => {
   const jobs = [];
   const scrapingOptions = {
     benchmark: true,
@@ -48,13 +48,19 @@ function setupBatchJobs() {
     jsonOutputFile: 'sitemaps',
     parentDir: 'data',
   };
-  jobs.push(scrapingOptions)
+  jobs.push(scrapingOptions);
 
-  jobs.push({...scrapingOptions, jsonInputFile: 'sitemaps', jsonOutputFile: 'urls'})
-  
-  jobs.push({...scrapingOptions, jsonInputFile: 'urls', jsonOutputFile: 'output', checkErrors: true, waitUntil: WAIT_EVENTS.DOMCONTENTLOADED, allowedResources: [BROWSER_RESOURCE_TYPES.DOCUMENT]});
+  jobs.push({ ...scrapingOptions, jsonInputFile: 'sitemaps', jsonOutputFile: 'urls' });
+
+  jobs.push({
+    ...scrapingOptions,
+    jsonInputFile: 'urls',
+    jsonOutputFile: 'output',
+    checkErrors: true,
+    waitUntil: WAIT_EVENTS.DOMCONTENTLOADED,
+  });
   return jobs;
-}
+});
 ```
 
 ## Scraping configuration
@@ -100,7 +106,7 @@ function setupBatchJobs() {
 
 
 ## Running the scraper
-The `runBatchJobs` function will run the jobs sequentially, that have been setup using `setupBatchJobs` - that's it!
+The `runBatchScraper` function will run the jobs sequentially - that's it!
 
 To run the script, just run `node index.js` in the `src` directory:
 ```bash
