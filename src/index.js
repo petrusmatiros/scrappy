@@ -1,7 +1,7 @@
 const { runBatchScraper } = require('./scraper');
 const { WAIT_EVENTS, BROWSER_RESOURCE_TYPES } = require('./constants');
 
-runBatchScraper(() => {
+runBatchScraper((() => {
   const jobs = [];
   const scrapingOptions = {
     benchmark: true,
@@ -44,4 +44,4 @@ runBatchScraper(() => {
     },
   });
   return jobs;
-});
+})());

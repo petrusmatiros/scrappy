@@ -23,7 +23,7 @@ Add a json file with the urls you want to scrape, e.g. add `data.json` file in `
 
 Configure your options for each job in `src/index.js` by pushing an options object for each job, e.g.:
 ```javascript
-runBatchScraper(() => {
+runBatchScraper((() => {
   const jobs = [];
   const scrapingOptions = {
     benchmark: true,
@@ -56,11 +56,17 @@ runBatchScraper(() => {
     ...scrapingOptions,
     jsonInputFile: 'urls',
     jsonOutputFile: 'output',
-    checkErrors: true,
     waitUntil: WAIT_EVENTS.DOMCONTENTLOADED,
+    allowedResources: [BROWSER_RESOURCE_TYPES.DOCUMENT],
+    scrapingFunction: () => {
+      const selected = document.getElementById('__next');
+      return selected
+        ? { url: window.location.href, servedByNext: true }
+        : { url: window.location.href, servedByNext: false };
+    },
   });
   return jobs;
-});
+})());
 ```
 
 ## Scraping configuration
