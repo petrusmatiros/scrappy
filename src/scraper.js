@@ -7,6 +7,8 @@ const config = require('./config.json');
 const kleur = require('kleur');
 const { WAIT_EVENTS, BROWSER_RESOURCE_TYPES } = require('./constants');
 
+const currentDirectory = __dirname;
+
 function createProgressBar(totalSteps, currentJob, totalJobs) {
   const progressBarLength = 20;
   const stepSize = totalSteps / progressBarLength;
@@ -35,6 +37,7 @@ async function scrape(
   includeMetrics = false,
   waitUntil,
   allowedResources,
+  credentials,
   scrapingFunction,
   checkErrors = false,
   currentJob,
@@ -47,6 +50,10 @@ async function scrape(
   async function scrapeURL(url) {
     const page = await browser.newPage();
     page.setDefaultNavigationTimeout(0);
+
+    if (credentials && credentials.length > 0) {
+      await page.authenticate(credentials);
+    }
 
     if (allowedResources && allowedResources.length > 0) {
       await page.setRequestInterception(true);
@@ -134,6 +141,7 @@ const validOptionTypes = {
   logResults: 'boolean',
   waitUntil: 'string',
   allowedResources: 'object-string',
+  credentials: 'object-string',
   scrapingFunction: 'function',
   checkErrors: 'boolean',
   whatStringToReplace: 'string',
@@ -170,6 +178,7 @@ function validateOptions(options) {
  * @param {boolean} options.logResults - Whether to log the scraped results. Defaults to false.
  * @param {string} options.waitUntil - The waitUntil value for page navigation. Defaults to 'load'.
  * @param {Array<string>} options.allowedResources - The allowed resource types for page requests. Defaults to an empty array.
+ * @param {Object<string, string>} options.credentials - The credentials for the page. Defaults to an empty object.
  * @param {Function} options.scrapingFunction - The function to be executed for scraping. Defaults to an empty function.
  * @param {boolean} options.checkErrors - Whether to check for errors during scraping. Defaults to false.
  * @param {string} options.whatStringToReplace - The string to be replaced in the URLs. Defaults to an empty string.
@@ -189,6 +198,7 @@ async function runScraper(options) {
     logResults = false,
     waitUntil = WAIT_EVENTS.LOAD,
     allowedResources = [],
+    credentials = {},
     scrapingFunction = () => {},
     checkErrors = false,
     whatStringToReplace = '',
@@ -203,10 +213,10 @@ async function runScraper(options) {
   validateOptions(options);
 
   // create directory if it doesn't exist
-  if (!fs.existsSync(parentDir)) {
-    fs.mkdirSync(parentDir);
+  if (!fs.existsSync(`${currentDirectory}/${parentDir}`)) {
+    fs.mkdirSync(`${currentDirectory}/${parentDir}`);
   }
-  const data = fs.readFileSync(`${parentDir}/${jsonInputFile ? jsonInputFile : 'data'}.json`);
+  const data = fs.readFileSync(`${currentDirectory}/${parentDir}/${jsonInputFile ? jsonInputFile : 'data'}.json`);
   console.log(`Running job ${currentJob} of ${totalJobs}...`);
   const urls = JSON.parse(data).flat();
   if (whatStringToReplace && replaceWithString) {
@@ -231,6 +241,7 @@ async function runScraper(options) {
       metrics,
       waitUntil,
       allowedResources,
+      credentials,
       scrapingFunction,
       checkErrors,
       currentJob,
@@ -249,13 +260,13 @@ async function runScraper(options) {
     }
     console.log(
       `Writing ${checkErrors ? 'status code' : 'scraped'} data to ` +
-        kleur.underline(`${parentDir}/${jsonOutputFile ? jsonOutputFile : 'output'}.json`) +
+        kleur.underline(`${currentDirectory}/${parentDir}/${jsonOutputFile ? jsonOutputFile : 'output'}.json`) +
         '...',
     );
     console.log('-------------------------------------------------');
     scraped = scraped.flat();
     fs.writeFileSync(
-      `${parentDir}/${jsonOutputFile ? jsonOutputFile : 'output'}.json`,
+      `${currentDirectory}/${parentDir}/${jsonOutputFile ? jsonOutputFile : 'output'}.json`,
       JSON.stringify(scraped, null, 2),
     );
   } catch (error) {

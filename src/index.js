@@ -1,10 +1,18 @@
 const { runBatchScraper } = require('./scraper');
 const { WAIT_EVENTS, BROWSER_RESOURCE_TYPES } = require('./constants');
 
+const currentDirectory = __dirname;
+
+require('dotenv').config({ path: `${currentDirectory}/.env` });
+
 runBatchScraper(
   (() => {
     const jobs = [];
     const scrapingOptions = {
+      credentials: {
+        username: process.env.AUTH_USERNAME,
+        password: process.env.AUTH_PASSWORD,
+      },
       scrapingFunction: () => {
         const selected = document.querySelectorAll('tbody a');
         const data = [];

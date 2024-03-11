@@ -20,13 +20,27 @@ Add a json file with the urls you want to scrape, e.g. add `data.json` file in `
 ]
 
 ```
+> [!IMPORTANT]
+> If you need to authenticate to a website, add a `.env` file in the `src` directory
+
 
 Configure your options for each job in `src/index.js` by pushing an options object for each job, e.g.:
 ```javascript
+const { runBatchScraper } = require('./scraper');
+const { WAIT_EVENTS, BROWSER_RESOURCE_TYPES } = require('./constants');
+
+const currentDirectory = __dirname;
+
+require('dotenv').config({ path: `${currentDirectory}/.env` });
+
 runBatchScraper(
   (() => {
     const jobs = [];
     const scrapingOptions = {
+      credentials: {
+        username: process.env.AUTH_USERNAME,
+        password: process.env.AUTH_PASSWORD,
+      },
       scrapingFunction: () => {
         const selected = document.querySelectorAll('tbody a');
         const data = [];
@@ -37,6 +51,8 @@ runBatchScraper(
         }
         return data.length ? data : null;
       },
+      whatStringToReplace: 'https://www.hjarnfonden.se',
+      replaceWithString: 'https://q.hjarnfonden.se',
       jsonInputFile: 'data',
       jsonOutputFile: 'sitemaps',
       parentDir: 'data',
@@ -108,9 +124,8 @@ runBatchScraper(
 ## Running the scraper
 The `runBatchScraper` function will run the jobs sequentially - that's it!
 
-To run the script, just run `node index.js` in the `src` directory:
+To run the script, just run `npm run dev`:
 ```bash
-cd src
-node index.js
+npm run dev
 ```
 

@@ -4,12 +4,15 @@
   "description": "a general purpose scarper using puppeteer",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "export NODE_ENV=dev && node src/index.js",
+    "start": "export NODE_ENV=prod && node src/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.4.5",
     "kleur": "^4.1.5",
     "puppeteer": "^22.4.1",
     "puppeteer-extra": "^3.3.6",
