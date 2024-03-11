@@ -260,7 +260,7 @@ async function runScraper(options) {
     }
     console.log(
       `Writing ${checkErrors ? 'status code' : 'scraped'} data to ` +
-        kleur.underline(`${currentDirectory}/${parentDir}/${jsonOutputFile ? jsonOutputFile : 'output'}.json`) +
+        kleur.underline(`${parentDir}/${jsonOutputFile ? jsonOutputFile : 'output'}.json`) +
         '...',
     );
     console.log('-------------------------------------------------');
