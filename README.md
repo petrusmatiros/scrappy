@@ -51,8 +51,6 @@ runBatchScraper(
         }
         return data.length ? data : null;
       },
-      whatStringToReplace: 'https://www.hjarnfonden.se',
-      replaceWithString: 'https://q.hjarnfonden.se',
       jsonInputFile: 'data',
       jsonOutputFile: 'sitemaps',
       parentDir: 'data',
