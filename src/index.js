@@ -25,10 +25,6 @@ runBatchScraper(
       },
       jsonInputFile: 'data',
       jsonOutputFile: 'sitemaps',
-      sortOutput: {
-        sortKey: 'url',
-        sortOrder: SORT_OPTIONS.ASC,
-      },
       parentDir: 'data',
     };
     jobs.push(scrapingOptions);
