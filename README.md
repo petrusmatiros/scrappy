@@ -21,7 +21,7 @@ Add a json file with the urls you want to scrape, e.g. add `data.json` file in `
 
 ```
 > [!IMPORTANT]
-> If you need to authenticate to a website, add a `.env` file in the `src` directory
+> If you want to use authentication, add a `.env` file in the `src` directory
 
 
 Configure your options for each job in `src/index.js` by pushing an options object for each job, e.g.:
