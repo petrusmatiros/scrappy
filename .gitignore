@@ -33,7 +33,8 @@ jspm_packages/
 # Output of 'npm pack'
 *.tgz
 
-# 
+# DS_Store files
+.DS_Store
 
 # dotenv environment variable files
 .env
