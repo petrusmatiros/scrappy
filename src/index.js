@@ -1,5 +1,5 @@
 const { runBatchScraper } = require('./scraper');
-const { WAIT_EVENTS, BROWSER_RESOURCE_TYPES } = require('./constants');
+const { WAIT_EVENTS, BROWSER_RESOURCE_TYPES, SORT_OPTIONS } = require('./constants');
 
 const currentDirectory = __dirname;
 
@@ -25,6 +25,10 @@ runBatchScraper(
       },
       jsonInputFile: 'data',
       jsonOutputFile: 'sitemaps',
+      sortOutput: {
+        sortKey: 'url',
+        sortOrder: SORT_OPTIONS.ASC,
+      },
       parentDir: 'data',
     };
     jobs.push(scrapingOptions);

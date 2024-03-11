@@ -49,7 +49,7 @@ async function scrape(
 
   async function scrapeURL(url) {
     const page = await browser.newPage();
-    page.setDefaultNavigationTimeout(0);
+    // page.setDefaultNavigationTimeout(0);
     
     if (credentials && credentials.username && credentials.password) {
       page.authenticate(credentials)
@@ -135,6 +135,14 @@ async function scrape(
   return results;
 }
 
+function sortKey(a, b, sortKey, sortOrder) {
+  if (sortOrder === 'asc') {
+    return a[sortKey] < b[sortKey] ? -1 : a[sortKey] > b[sortKey] ? 1 : 0;
+  } else if (sortOrder === 'desc'){
+    return a[sortKey] > b[sortKey] ? -1 : a[sortKey] < b[sortKey] ? 1 : 0;
+  }
+}
+
 const validOptionTypes = {
   benchmark: 'boolean',
   metrics: 'boolean',
@@ -148,6 +156,7 @@ const validOptionTypes = {
   replaceWithString: 'string',
   jsonInputFile: 'string',
   jsonOutputFile: 'string',
+  sortOutput: 'object-string',
   parentDir: 'string',
   currentJob: 'number',
   totalJobs: 'number',
@@ -185,6 +194,7 @@ function validateOptions(options) {
  * @param {string} options.replaceWithString - The string to replace the matched string in the URLs. Defaults to an empty string.
  * @param {string} options.jsonInputFile - The input JSON file name.
  * @param {string} options.jsonOutputFile - The output JSON file name.
+ * @param {string} options.sortOutput - The sorting option for the output JSON file. Defaults to an empty object
  * @param {string} options.parentDir - The parent directory for the JSON files.
  * @param {number} options.currentJob - The current job number.
  * @param {number} options.totalJobs - The total number of jobs.
@@ -205,6 +215,7 @@ async function runScraper(options) {
     replaceWithString = '',
     jsonInputFile,
     jsonOutputFile,
+    sortOutput = {},
     parentDir,
     currentJob,
     totalJobs,
@@ -264,6 +275,9 @@ async function runScraper(options) {
     );
     console.log('-------------------------------------------------');
     scraped = scraped.flat();
+    if (sortOutput.sortKey && sortOutput.sortOrder) {
+      scraped = scraped.sort((a, b) => sortKey(a, b, sortOutput.sortKey, sortOutput.sortOrder));
+    }
     fs.writeFileSync(
       `${currentDirectory}/${parentDir}/${jsonOutputFile ? jsonOutputFile : 'output'}.json`,
       JSON.stringify(scraped, null, 2),

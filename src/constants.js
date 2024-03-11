@@ -21,7 +21,13 @@ const BROWSER_RESOURCE_TYPES = {
   OTHER: 'other',
 };
 
+const SORT_OPTIONS = {
+  ASC: 'asc',
+  DESC: 'desc',
+};
+
 module.exports = {
   WAIT_EVENTS,
   BROWSER_RESOURCE_TYPES,
+  SORT_OPTIONS,
 };

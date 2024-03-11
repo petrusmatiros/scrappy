@@ -92,6 +92,7 @@ runBatchScraper(
 | `replaceWithString` | string | the string to replace the `whatStringToReplace` with |
 | `jsonInputFile` | string | the name of the input json file |
 | `jsonOutputFile` | string | the name of the output json file |
+| `sortOutput` | object | object containing a sortKey and a sortOption (e.g. `{sortKey: 'url', sortOption: 'ASC'}`) |
 | `parentDir` | string | the parent directory of the input and output json file |
 
 #### WAIT_EVENTS
@@ -118,6 +119,12 @@ runBatchScraper(
 | `WEBSOCKET` | a resource received over a websocket |
 | `MANIFEST` | a manifest |
 | `OTHER` | a other type of resource |
+
+#### SORT_OPTIONS
+| Value | Description |
+| --- | --- |
+| `ASC` | ascending order |
+| `DESC` | descending order |
 
 
 ## Running the scraper
