@@ -212,7 +212,6 @@ async function runScraper(options) {
 
   validateOptions(options);
 
-  // create directory if it doesn't exist
   if (!fs.existsSync(`${currentDirectory}/${parentDir}`)) {
     fs.mkdirSync(`${currentDirectory}/${parentDir}`);
   }
