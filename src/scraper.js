@@ -50,9 +50,9 @@ async function scrape(
   async function scrapeURL(url) {
     const page = await browser.newPage();
     page.setDefaultNavigationTimeout(0);
-    
+
     if (credentials && credentials.username && credentials.password) {
-      page.authenticate(credentials)
+      page.authenticate(credentials);
     }
 
     if (allowedResources && allowedResources.length > 0) {
@@ -138,7 +138,7 @@ async function scrape(
 function sortKey(a, b, sortKey, sortOrder) {
   if (sortOrder === 'asc') {
     return a[sortKey] < b[sortKey] ? -1 : a[sortKey] > b[sortKey] ? 1 : 0;
-  } else if (sortOrder === 'desc'){
+  } else if (sortOrder === 'desc') {
     return a[sortKey] > b[sortKey] ? -1 : a[sortKey] < b[sortKey] ? 1 : 0;
   }
 }
@@ -230,8 +230,12 @@ async function runScraper(options) {
   console.log(`Running job ${currentJob} of ${totalJobs}...`);
   const urls = JSON.parse(data).flat();
   if (whatStringToReplace && replaceWithString) {
-    for (let i = 0; i < urls.length; i++) {
-      urls[i] = urls[i].replace(whatStringToReplace, replaceWithString);
+    if (urls.length === 1) {
+      urls[0].replaceAll(whatStringToReplace, replaceWithString);
+    } else {
+      for (let i = 0; i < urls.length; i++) {
+        urls[i].replaceAll(whatStringToReplace, replaceWithString);
+      }
     }
   }
   const timings = new Map();
