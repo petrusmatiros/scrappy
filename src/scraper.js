@@ -226,13 +226,13 @@ async function runScraper(options) {
   const data = fs.readFileSync(`${currentDirectory}/${parentDir}/${jsonInputFile ? jsonInputFile : 'data'}.json`);
   console.log(`Running job ${currentJob} of ${totalJobs}...`);
   const urls = JSON.parse(data).flat();
+  if (!urls) {
+    throw new Error('No URLs found in the input file');
+  }
   if (replaceString && replaceString.target && replaceString.replacement) {
-    if (urls.length === 1) {
-      urls[0].replaceAll(replaceString.target, replaceString.replacement);
-    } else {
-      for (let i = 0; i < urls.length; i++) {
-        urls[i].replaceAll(replaceString.target, replaceString.replacement);
-      }
+    console.log(kleur.dim(`Replacing ${kleur.underline(replaceString.target)} with ${kleur.underline(replaceString.replacement)} in URLs...`));
+    for (let i = 0; i < urls.length; i++) {
+      urls[i] = urls[i].replaceAll(replaceString.target, replaceString.replacement);
     }
   }
   const timings = new Map();
@@ -274,7 +274,7 @@ async function runScraper(options) {
         kleur.underline(`${parentDir}/${jsonOutputFile ? jsonOutputFile : 'output'}.json`) +
         '...',
     );
-    console.log('-------------------------------------------------');
+    console.log('--------------------------------------------------------------------------------------------------');
     scraped = scraped.flat();
     if (sortOutput.sortKey && sortOutput.sortOrder) {
       scraped = scraped.sort((a, b) => sortKey(a, b, sortOutput.sortKey, sortOutput.sortOrder));
