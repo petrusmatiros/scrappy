@@ -88,8 +88,7 @@ runBatchScraper(
 | `credentials` | object of strings | the credentials to use for authentication e.g `{username: 'username', password: 'password'}` |
 | `scrapingFunction` | function | the function to run on the page |
 | `checkErrors` | boolean | if true, will check for errors on the page (it only checks for errors and outputs it to the json output file) |
-| `whatStringToReplace` | string | the string to replace in the input json file (e.g. makes it easier to replace domains) |
-| `replaceWithString` | string | the string to replace the `whatStringToReplace` with |
+| `replaceString` | object of strings | the string to replace in the input json file (e.g. makes it easier to replace domains) e.g `{target: 'string', replacement: 'string'}` |
 | `jsonInputFile` | string | the name of the input json file |
 | `jsonOutputFile` | string | the name of the output json file |
 | `sortOutput` | object | object containing a sortKey and a sortOption (e.g. `{sortKey: 'url', sortOption: 'ASC'}`) |

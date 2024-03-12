@@ -152,8 +152,7 @@ const validOptionTypes = {
   credentials: 'object-string',
   scrapingFunction: 'function',
   checkErrors: 'boolean',
-  whatStringToReplace: 'string',
-  replaceWithString: 'string',
+  replaceString: 'object-string',
   jsonInputFile: 'string',
   jsonOutputFile: 'string',
   sortOutput: 'object-string',
@@ -187,14 +186,13 @@ function validateOptions(options) {
  * @param {boolean} options.logResults - Whether to log the scraped results. Defaults to false.
  * @param {string} options.waitUntil - The waitUntil value for page navigation. Defaults to 'load'.
  * @param {Array<string>} options.allowedResources - The allowed resource types for page requests. Defaults to an empty array.
- * @param {Object<string, string>} options.credentials - The credentials for the page. Defaults to an empty object.
+ * @param {Object<string, string>} options.credentials - The credentials for the page. `{username: <string>, password:<string>}`. Defaults to an empty object.
  * @param {Function} options.scrapingFunction - The function to be executed for scraping. Defaults to an empty function.
  * @param {boolean} options.checkErrors - Whether to check for errors during scraping. Defaults to false.
- * @param {string} options.whatStringToReplace - The string to be replaced in the URLs. Defaults to an empty string.
- * @param {string} options.replaceWithString - The string to replace the matched string in the URLs. Defaults to an empty string.
+ * @param {Object<string, string>} options.replaceString - The string to be replaced in the URLs. `{target: <string>, replacement:<string>}`. Defaults to an empty object.
  * @param {string} options.jsonInputFile - The input JSON file name.
  * @param {string} options.jsonOutputFile - The output JSON file name.
- * @param {string} options.sortOutput - The sorting option for the output JSON file. Defaults to an empty object
+ * @param {Object<string, string>} options.sortOutput - The sorting option for the output JSON file. `{sortKey: <string>, sortOrder:<string>}`. Defaults to an empty object
  * @param {string} options.parentDir - The parent directory for the JSON files.
  * @param {number} options.currentJob - The current job number.
  * @param {number} options.totalJobs - The total number of jobs.
@@ -211,8 +209,7 @@ async function runScraper(options) {
     credentials = {},
     scrapingFunction = () => {},
     checkErrors = false,
-    whatStringToReplace = '',
-    replaceWithString = '',
+    replaceString = {},
     jsonInputFile,
     jsonOutputFile,
     sortOutput = {},
@@ -229,12 +226,12 @@ async function runScraper(options) {
   const data = fs.readFileSync(`${currentDirectory}/${parentDir}/${jsonInputFile ? jsonInputFile : 'data'}.json`);
   console.log(`Running job ${currentJob} of ${totalJobs}...`);
   const urls = JSON.parse(data).flat();
-  if (whatStringToReplace && replaceWithString) {
+  if (replaceString && replaceString.target && replaceString.replacement) {
     if (urls.length === 1) {
-      urls[0].replaceAll(whatStringToReplace, replaceWithString);
+      urls[0].replaceAll(replaceString.target, replaceString.replacement);
     } else {
       for (let i = 0; i < urls.length; i++) {
-        urls[i].replaceAll(whatStringToReplace, replaceWithString);
+        urls[i].replaceAll(replaceString.target, replaceString.replacement);
       }
     }
   }
