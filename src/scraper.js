@@ -50,7 +50,6 @@ async function scrape(
   async function scrapeURL(url) {
     const page = await browser.newPage();
     page.setDefaultNavigationTimeout(0);
-
     if (credentials && credentials.username && credentials.password) {
       page.authenticate(credentials);
     }

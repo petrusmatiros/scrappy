@@ -26,6 +26,7 @@ runBatchScraper(
       jsonInputFile: 'data',
       jsonOutputFile: 'sitemaps',
       parentDir: 'data',
+      replaceString: {target: process.env.TARGET, replacement: process.env.REPLACEMENT}
     };
     jobs.push(scrapingOptions);
 
@@ -35,14 +36,9 @@ runBatchScraper(
       ...scrapingOptions,
       jsonInputFile: 'urls',
       jsonOutputFile: 'output',
-      waitUntil: WAIT_EVENTS.DOMCONTENTLOADED,
+      checkErrors: true,
+      waitUntil: WAIT_EVENTS.NETWORKIDLE0,
       allowedResources: [BROWSER_RESOURCE_TYPES.DOCUMENT],
-      scrapingFunction: () => {
-        const selected = document.getElementById('__next');
-        return selected
-          ? { url: window.location.href, servedByNext: true }
-          : { url: window.location.href, servedByNext: false };
-      },
     });
     return jobs;
   })(),
